@@ -1,8 +1,11 @@
 import GameNav from "../components/GameNav";
-import IFrame from "../components/IFrame";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 
 function Game() {
+  const iFrameRef = useRef(null);
+  const [currentSrc, setCurrentSrc] = useState("");
+  const [numClicks, setNumClicks] = useState(0);
+
   const goal = {
     start: {
       name: "Leaves",
@@ -14,12 +17,30 @@ function Game() {
     },
   };
 
-  const [numClicks, setNumClicks] = useState(0);
+  useEffect(() => {
+    if (iFrameRef.current) {
+      console.log(iFrameRef.current.getAttribute("src"));
+    }
+  }, []);
+
+  const handleLoad = () => {
+    if (iFrameRef.current) {
+      const currentUrl = iFrameRef.current.contentWindow.location.href;
+      setCurrentSrc(currentUrl);
+      console.log("Iframe src changed to:", currentUrl);
+    }
+  };
 
   return (
     <div class="w-screen h-screen">
       <GameNav goal={goal} numClicks={numClicks} />
-      <IFrame />
+      <iframe
+        ref={iFrameRef}
+        src="https://minecraft.fandom.com/wiki/Block"
+        onLoad={handleLoad}
+        class="w-full h-full"
+      ></iframe>
+      <p>current: {currentSrc}</p>
     </div>
   );
 }
