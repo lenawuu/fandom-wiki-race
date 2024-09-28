@@ -1,8 +1,16 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import Game from "./pages/Game";
 
-const router = createBrowserRouter([{}]);
+import "./index.css";
+
+const router = createBrowserRouter([
+  {
+    path: "/game",
+    element: <Game />,
+  },
+]);
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
