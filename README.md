@@ -28,3 +28,40 @@ This project let many of us work on several aspects of our software engineering 
 ## What's next for FandomWikiRace
 
 If we continue to work on this project in the future, one of the things that we have thought about adding in the future is a robust multiplayer system that you can use in order to play with, and compete against your friends.
+
+# How To run
+
+## Dependencies
+
+-   git
+-   node
+-   npm
+
+## Step-by-step
+
+### Clone Repository
+
+Navigate to where you would like to install the process and run the following command to clone the repository and navigate to it.
+
+```sh
+git clone https://github.com/lenawuu/fandom-wiki-race.git && cd fandom-wiki-race
+```
+
+### Install npm dependencies
+
+The following command will install the required node dependencies for the project. Make sure you are still navigated to your fandom-wiki-race folder
+
+```sh
+npm i &&
+npm i --prefix ./client && npm i --prefix ./server npm i
+```
+
+### Run the application
+
+To run the application run:
+
+```sh
+npm run all
+```
+
+Your application should automatically open, but if it does not, navigate to http://localhost:3000/. it may take a few seconds for the application to start running.
