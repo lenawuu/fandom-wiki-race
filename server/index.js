@@ -1,10 +1,12 @@
 const express = require("express");
 const cheerio = require("cheerio");
+const cors = require("cors");
 
 const app = express();
 const PORT = 8080;
 
 app.use(express.json());
+app.use(cors());
 
 app.post("/clean", async (req, res) => {
   const url = req.body.url;
