@@ -1,7 +1,6 @@
 import GameNav from "../components/GameNav";
-import { useState, useRef, useEffect } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
-import { Button } from "@headlessui/react";
 import winGif from "../assets/mariokartwin.gif";
 import slayGif from "../assets/slaygif.gif";
 
@@ -12,8 +11,10 @@ function Game() {
   const [history, setHistory] = useState([]);
   const [curIndex, setCurIndex] = useState(0);
   const [curURL, setCurURL] = useState("");
-  const [showModal, setShowModal] = useState(false);
+  const [showWinModal, setShowWinModal] = useState(false);
+  const [showLoseModal, setShowLoseModal] = useState(false);
 
+  const solution = null;
   const goal = {
     start: {
       title: "Leaves",
@@ -90,20 +91,31 @@ function Game() {
   };
 
   const resetGame = () => {
-    const dialog = document.getElementById("winModal");
+    const winDialog = document.getElementById("winModal");
 
     // Close the modal if it's open
-    if (dialog.open) {
-      dialog.close();
+    if (winDialog.open) {
+      winDialog.close();
+    } else {
+      const loseDialog = document.getElementById("loseModal");
+      if (loseDialog.open) {
+        loseDialog.close();
+      }
     }
 
     setHistory([{ title: titleFromURL(goal.start.url), url: goal.start.url }]);
     fetchClean(goal.start.url);
     setCurURL(goal.start.url);
 
-    setShowModal(false);
+    setShowWinModal(false);
+    setShowLoseModal(false);
     setNumClicks(0);
     setCurIndex(0);
+  };
+
+  const handleGiveUp = () => {
+    const dialog = document.getElementById("loseModal");
+    dialog.showModal();
   };
 
   // on Mount
@@ -121,16 +133,16 @@ function Game() {
 
   useEffect(() => {
     if (curURL.toUpperCase() === goal.end.url.toUpperCase()) {
-      setShowModal(true);
+      setShowWinModal(true);
     }
   }, [curURL]);
 
   useEffect(() => {
-    if (showModal) {
+    if (showWinModal) {
       const dialog = document.getElementById("winModal");
-      dialog.showModal();
+      dialog.showWinModal();
     }
-  }, [showModal]);
+  }, [showWinModal]);
 
   return (
     <div class="w-screen h-screen flex flex-col bg-neutral">
@@ -174,14 +186,25 @@ function Game() {
             >
               Find another way!
             </button>
-            <button class="btn btn-accent w-56">New game</button>
+            <a class="btn btn-accent w-56" href="/">
+              New game
+            </a>
           </div>
         </div>
       </dialog>
-      <div className="bg-base-100 w-full justify-start h-10 items-center px-5 flex flex-row gap-2">
+      <dialog id="loseModal">
+        <div class="modal-box flex flex-col gap-4 justify-center">
+          <p>Aw man, you were so close!</p>
+          <p>Here is a path you could have taken: {solution} </p>
+          <a class="btn btn-primary" href="/">
+            New game
+          </a>
+        </div>
+      </dialog>
+      <div className="bg-base-100 w-full justify-between h-10 items-center px-5 py-4 flex flex-row gap-2">
         {history.slice(0, curIndex + 1).map((item, i) => (
           <div key={i} className="flex flex-row gap-2">
-            <Button onClick={() => handleHistoryNav(i)}>{item.title}</Button>
+            <button onClick={() => handleHistoryNav(i)}>{item.title}</button>
             <div>
               {i < curIndex ? (
                 <span> ➔ </span> // Render arrow if not the last item
@@ -189,6 +212,9 @@ function Game() {
             </div>
           </div>
         ))}
+        <button class="hover:underline" onClick={() => handleGiveUp()}>
+          Give up
+        </button>
       </div>
     </div>
   );
