@@ -15,7 +15,7 @@ function GameNav({ goal, numClicks, handleNav, curIndex }) {
       </div>
       <div>
         <p class="font-bold text-lg text-primary">
-          {goal.start.title} → {goal.end.title}
+          {goal.start.name} → {goal.end.name}
         </p>
       </div>
       <div>

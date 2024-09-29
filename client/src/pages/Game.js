@@ -53,7 +53,6 @@ function Game() {
     event.preventDefault();
 
     const href = event.target.href;
-    console.log(href);
 
     if (!href) {
       console.log(event.currentTarget);
@@ -115,7 +114,7 @@ function Game() {
       // Check if gameData.goal exists
       setHistory([
         {
-          title: gameData.goal.start.title,
+          title: gameData.goal.start.name,
           url: gameData.goal.start.url,
         },
       ]);
@@ -198,7 +197,7 @@ function Game() {
           </div>
           <div>
             <p class="text-center text-lg">
-              You got to {gameData.goal?.end.title} in {numClicks} clicks!
+              You got to {gameData.goal.end.name} in {numClicks} clicks!
             </p>
             <p class="text-center text-lg">Your path: {getPath()}</p>
           </div>
@@ -225,11 +224,11 @@ function Game() {
           <img src="https://i.pinimg.com/originals/55/41/31/55413151a0cb5b5c0f1eba2f714f1ebd.gif"></img>
           <p class="text-center text-xl">
             Here is a path you could have taken:{" "}
-            {gameData.goal?.path.map((item, i) => (
+            {gameData.goal.path.map((item, i) => (
               <div key={i} className="flex flex-row">
-                <p>{item}</p>
+                <p>{item.name}</p>
                 <div>
-                  {i < gameData.goal?.path.length ? (
+                  {i < gameData.goal.path.length ? (
                     <span> ➔ </span> // Render arrow if not the last item
                   ) : null}
                 </div>

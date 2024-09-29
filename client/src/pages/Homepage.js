@@ -80,10 +80,12 @@ function Homepage() {
   };
 
   const fetchGame = async () => {
-      try {
-          let path = selectedFandom.stem.replace(/^https?:\/\//, '');
-          path = path.slice(0, -1);
-      const response = await axios.get(`http://localhost:5051/start-round?domain=${path}`);
+    try {
+      let path = selectedFandom.stem.replace(/^https?:\/\//, "");
+      path = path.slice(0, -1);
+      const response = await axios.get(
+        `http://localhost:5051/start-round?domain=${path}`
+      );
       // const response = { data: selectedFandom };
       localStorage.setItem("game", JSON.stringify(response.data));
       navigate("/game");
