@@ -3,7 +3,9 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 function Homepage() {
-  const fandoms = [
+  const toggleDemo = true;
+
+  fandoms = [
     {
       name: "Mario Kart",
       src: "https://assets.nintendo.com/image/upload/ar_16:9,b_auto:border,c_lpad/b_white/f_auto/q_auto/dpr_1.5/c_scale,w_400/ncom/software/switch/70070000013723/78683d87f12356c571e4541b2ef649e3bd608285139704087c552171f715e399",
@@ -11,14 +13,14 @@ function Homepage() {
       stem: "https://mariokart.fandom.com/",
       goal: {
         start: {
-          title: "Spiny Shell",
-          url: "https://mariokart.fandom.com/wiki/Spiny_Shell",
+          title: "Toad Harbor",
+          url: "https://mariokart.fandom.com/wiki/Toad_Harbor",
         },
         end: {
-          title: "Battle Mode",
-          url: "https://mariokart.fandom.com/wiki/Battle_Mode",
+          title: "The Train",
+          url: "https://mariokart.fandom.com/wiki/The_Train",
         },
-        path: ["Spiny Shell", "Banana", "Battle Mode"],
+        path: ["Toad Harbor", "Coin", "The Train"],
       },
     },
     {
@@ -27,14 +29,27 @@ function Homepage() {
       string: "https://fzero.fandom.com/",
       goal: {
         start: {
-          title: "Captain Falcon",
-          url: "https://fzero.fandom.com/wiki/Captain_Falcon",
+          title: "Magic Seagull",
+          url: "https://fzero.fandom.com/wiki/Magic_Seagull",
         },
         end: {
-          title: "Zoda",
-          url: "https://fzero.fandom.com/wiki/Zoda",
+          name: "List of F-Zero locations",
+          url: "https://fzero.fandom.com/wiki/List_of_F-Zero_locations",
         },
-        path: ["Captain Falcon", "Banana", "Zoda"],
+        path: [
+          {
+            name: "Magic Seagull",
+            url: "https://fzero.fandom.com/wiki/Magic_Seagull",
+          },
+          {
+            name: "Deep Claw",
+            url: "https://fzero.fandom.com/wiki/Deep_Claw",
+          },
+          {
+            name: "List of F-Zero locations",
+            url: "https://fzero.fandom.com/wiki/List_of_F-Zero_locations",
+          },
+        ],
       },
     },
     {
@@ -44,29 +59,31 @@ function Homepage() {
       stem: "https://burnout.fandom.com/",
       goal: {
         start: {
-          title: "Leaves",
-          url: "https://minecraft.fandom.com/wiki/Leaves",
+          name: "Nakamura PCPD SI-7",
+          url: "https://burnout.fandom.com/wiki/Nakamura_PCPD_SI-7",
         },
         end: {
-          title: "Bone Meal",
-          url: "https://minecraft.fandom.com/wiki/Bone_Meal",
+          name: "Crash TV Episode 32",
+          url: "https://burnout.fandom.com/wiki/Crash_TV_Episode_32",
         },
-      },
-    },
-    {
-      name: "Need For Speed",
-      src: "https://media.contentapi.ea.com/content/dam/need-for-speed/images/2017/06/nfspgenkeyartrgbhorz-16x9.jpg.adapt.crop191x100.1200w.jpg",
-      string: "nfs",
-      stem: "https://nfs.fandom.com/",
-      goal: {
-        start: {
-          title: "Leaves",
-          url: "https://minecraft.fandom.com/wiki/Leaves",
-        },
-        end: {
-          title: "Bone Meal",
-          url: "https://minecraft.fandom.com/wiki/Bone_Meal",
-        },
+        path: [
+          {
+            name: "Nakamura PCPD SI-7",
+            url: "https://burnout.fandom.com/wiki/Nakamura_PCPD_SI-7",
+          },
+          {
+            name: "Cops and Robbers Pack",
+            url: "https://burnout.fandom.com/wiki/Cops_and_Robbers_Pack",
+          },
+          {
+            name: "Crash TV Episode 31",
+            url: "https://burnout.fandom.com/wiki/Crash_TV_Episode_31",
+          },
+          {
+            name: "Crash TV Episode 32",
+            url: "https://burnout.fandom.com/wiki/Crash_TV_Episode_32",
+          },
+        ],
       },
     },
   ];
@@ -80,17 +97,19 @@ function Homepage() {
   };
 
   const fetchGame = async () => {
-    try {
-      let path = selectedFandom.stem.replace(/^https?:\/\//, "");
-      path = path.slice(0, -1);
-      const response = await axios.get(         
-        `http://localhost:5051/start-round?domain=${path}`
-      );
-      const game = { ...selectedFandom, goal: response.data };
-      // const response = { data: selectedFandom };
-      localStorage.setItem("game", JSON.stringify(game));
-      navigate("/game");
-    } catch (error) {}
+    if (!toggleDemo) {
+      try {
+        let path = selectedFandom.stem.replace(/^https?:\/\//, "");
+        path = path.slice(0, -1);
+        await axios.get(
+          `http://localhost:5051/start-round?domain=${path}`
+        );
+        // const response = { data: selectedFandom };
+        localStorage.setItem("fandom", selectedFandom.name);
+        navigate("/game");
+      } catch (error) {}
+    } else {
+    }
   };
 
   return (

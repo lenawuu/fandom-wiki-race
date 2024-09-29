@@ -120,6 +120,17 @@ function Game() {
 
   // on Mount
   useEffect(() => {
+    let gameData;
+    const fetchGame = async() => {
+      try {
+        const response = await axios.get('http://localhost:5051/get-current')
+        gameData = response.data;
+
+        try {
+          // const response = await axios.post('http://localhost:8081/gamedata', { fandom: gameData.});
+        } catch(err) {}
+      } catch(err) {}
+    }
     resetGame();
   }, []);
 

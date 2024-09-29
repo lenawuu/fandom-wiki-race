@@ -8,6 +8,89 @@ const PORT = 8081;
 app.use(express.json());
 app.use(cors());
 
+const fandoms = [
+  {
+    name: "Mario Kart",
+    src: "https://assets.nintendo.com/image/upload/ar_16:9,b_auto:border,c_lpad/b_white/f_auto/q_auto/dpr_1.5/c_scale,w_400/ncom/software/switch/70070000013723/78683d87f12356c571e4541b2ef649e3bd608285139704087c552171f715e399",
+    string: "mariokart",
+    stem: "https://mariokart.fandom.com/",
+    goal: {
+      start: {
+        title: "Toad Harbor",
+        url: "https://mariokart.fandom.com/wiki/Toad_Harbor",
+      },
+      end: {
+        title: "The Train",
+        url: "https://mariokart.fandom.com/wiki/The_Train",
+      },
+      path: ["Toad Harbor", "Coin", "The Train"],
+    },
+  },
+  {
+    name: "F-Zero",
+    src: "https://www.nintendo.com/eu/media/images/10_share_images/games_15/super_nintendo_5/H2x1_SNES_FZero.jpg",
+    string: "https://fzero.fandom.com/",
+    goal: {
+      start: {
+        title: "Magic Seagull",
+        url: "https://fzero.fandom.com/wiki/Magic_Seagull",
+      },
+      end: {
+        name: "List of F-Zero locations",
+        url: "https://fzero.fandom.com/wiki/List_of_F-Zero_locations",
+      },
+      path: [
+        {
+          name: "Magic Seagull",
+          url: "https://fzero.fandom.com/wiki/Magic_Seagull",
+        },
+        {
+          name: "Deep Claw",
+          url: "https://fzero.fandom.com/wiki/Deep_Claw",
+        },
+        {
+          name: "List of F-Zero locations",
+          url: "https://fzero.fandom.com/wiki/List_of_F-Zero_locations",
+        },
+      ],
+    },
+  },
+  {
+    name: "Burnout",
+    src: "https://assetsio.gnwcdn.com/bop08.jpg?width=1200&height=1200&fit=bounds&quality=70&format=jpg&auto=webp",
+    string: "burnout",
+    stem: "https://burnout.fandom.com/",
+    goal: {
+      start: {
+        name: "Nakamura PCPD SI-7",
+        url: "https://burnout.fandom.com/wiki/Nakamura_PCPD_SI-7",
+      },
+      end: {
+        name: "Crash TV Episode 32",
+        url: "https://burnout.fandom.com/wiki/Crash_TV_Episode_32",
+      },
+      path: [
+        {
+          name: "Nakamura PCPD SI-7",
+          url: "https://burnout.fandom.com/wiki/Nakamura_PCPD_SI-7",
+        },
+        {
+          name: "Cops and Robbers Pack",
+          url: "https://burnout.fandom.com/wiki/Cops_and_Robbers_Pack",
+        },
+        {
+          name: "Crash TV Episode 31",
+          url: "https://burnout.fandom.com/wiki/Crash_TV_Episode_31",
+        },
+        {
+          name: "Crash TV Episode 32",
+          url: "https://burnout.fandom.com/wiki/Crash_TV_Episode_32",
+        },
+      ],
+    },
+  },
+];
+
 app.post("/clean", async (req, res) => {
   const url = req.body.url;
 
@@ -64,6 +147,13 @@ app.post("/clean", async (req, res) => {
   } catch (error) {
     res.status(500).send(`Error: ${error.message}`);
   }
+});
+
+app.post("/gamedata", (req, res) => {
+  const fandom = req.body.fandom;
+  const gameData = fandoms.find((f) => f.name === fandom);
+
+  res.send(gameData);
 });
 
 app.listen(PORT, () => {
