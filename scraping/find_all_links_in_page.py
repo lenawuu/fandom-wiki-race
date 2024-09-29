@@ -49,12 +49,9 @@ def map_ids(data, mapping):
 
 
 def process_data_to_links(data):
-    with Pool(250) as p:
+    with Pool(25) as p:
         processed_data = p.map(create_links_from_object, data)
     return processed_data
-    # for object in data:
-    #     links = create_links_from_object(object)
-    #     object["links"] = links
 
 
 def create_links_from_object(object):
