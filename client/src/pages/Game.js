@@ -1,5 +1,5 @@
 import GameNav from "../components/GameNav";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import winGif from "../assets/mariokartwin.gif";
 import slayGif from "../assets/slaygif.gif";
@@ -13,18 +13,25 @@ function Game() {
   const [curURL, setCurURL] = useState("");
   const [showWinModal, setShowWinModal] = useState(false);
   const [showLoseModal, setShowLoseModal] = useState(false);
+  const [gameData, setGameData] = useState({
+    name: "Mario Kart",
+    src: "https://assets.nintendo.com/image/upload/ar_16:9,b_auto:border,c_lpad/b_white/f_auto/q_auto/dpr_1.5/c_scale,w_400/ncom/software/switch/70070000013723/78683d87f12356c571e4541b2ef649e3bd608285139704087c552171f715e399",
+    string: "mariokart",
+    stem: "https://mariokart.fandom.com/",
+    goal: {
+      start: {
+        title: "Spiny Shell",
+        url: "https://mariokart.fandom.com/wiki/Spiny_Shell",
+      },
+      end: {
+        title: "Battle Mode",
+        url: "https://mariokart.fandom.com/wiki/Battle_Mode",
+      },
+      path: ["Spiny Shell", "Banana", "Battle Mode"],
+    },
+  });
 
-  const solution = null;
-  const goal = {
-    start: {
-      title: "Leaves",
-      url: "https://minecraft.fandom.com/wiki/Leaves",
-    },
-    end: {
-      title: "Bone Meal",
-      url: "https://minecraft.fandom.com/wiki/Bone_Meal",
-    },
-  };
+  const htmlRef = useRef(null);
 
   //TODO: Implement page cache, load images, wait til css loads timeout
   const fetchClean = async (url) => {
@@ -53,8 +60,7 @@ function Game() {
     }
     if (href) {
       const url =
-        "https://minecraft.fandom.com/" +
-        href.split("://")[1].split("/").slice(1).join("/");
+        gameData.stem + href.split("://")[1].split("/").slice(1).join("/");
 
       setHistory((prev) => [...prev, { title: titleFromURL(url), url: url }]);
       setCurIndex(curIndex + 1);
@@ -103,9 +109,19 @@ function Game() {
       }
     }
 
-    setHistory([{ title: titleFromURL(goal.start.url), url: goal.start.url }]);
-    fetchClean(goal.start.url);
-    setCurURL(goal.start.url);
+    const goal = gameData.goal;
+
+    if (gameData.goal) {
+      // Check if gameData.goal exists
+      setHistory([
+        {
+          title: gameData.goal.start.title,
+          url: gameData.goal.start.url,
+        },
+      ]);
+      fetchClean(gameData.goal.start.url);
+      setCurURL(gameData.goal.start.url);
+    }
 
     setShowWinModal(false);
     setShowLoseModal(false);
@@ -120,6 +136,12 @@ function Game() {
 
   // on Mount
   useEffect(() => {
+    const storedData = localStorage.getItem("game");
+    if (storedData) {
+      const parsedData = JSON.parse(storedData); // Parse the JSON string
+      setGameData(parsedData); // Set the parsed object
+      console.log(gameData.goal.end);
+    }
     resetGame();
   }, []);
 
@@ -132,7 +154,7 @@ function Game() {
   }, [curIndex, history]);
 
   useEffect(() => {
-    if (curURL.toUpperCase() === goal.end.url.toUpperCase()) {
+    if (curURL.toUpperCase() === gameData.goal.end.url.toUpperCase()) {
       setShowWinModal(true);
     }
   }, [curURL]);
@@ -140,14 +162,20 @@ function Game() {
   useEffect(() => {
     if (showWinModal) {
       const dialog = document.getElementById("winModal");
-      dialog.showWinModal();
+      dialog.showModal();
     }
   }, [showWinModal]);
+
+  useEffect(() => {
+    if (html) {
+      htmlRef.current.innerHTML = html; // Set the inner HTML
+    }
+  }, [html]);
 
   return (
     <div class="w-screen h-screen flex flex-col bg-neutral">
       <GameNav
-        goal={goal}
+        goal={gameData.goal}
         numClicks={numClicks}
         handleNav={handleHistoryNav}
         curIndex={curIndex}
@@ -157,10 +185,7 @@ function Game() {
           {isLoading ? (
             "loading"
           ) : (
-            <div
-              dangerouslySetInnerHTML={{ __html: html }}
-              onClick={handleLinkClick}
-            />
+            <div ref={htmlRef} onClick={handleLinkClick} />
           )}
         </div>
       </div>
@@ -173,7 +198,7 @@ function Game() {
           </div>
           <div>
             <p class="text-center text-lg">
-              You got to {goal.end.title} in {numClicks} clicks!
+              You got to {gameData.goal?.end.title} in {numClicks} clicks!
             </p>
             <p class="text-center text-lg">Your path: {getPath()}</p>
           </div>
@@ -194,24 +219,42 @@ function Game() {
       </dialog>
       <dialog id="loseModal">
         <div class="modal-box flex flex-col gap-4 justify-center">
-          <p>Aw man, you were so close!</p>
-          <p>Here is a path you could have taken: {solution} </p>
+          <p class="text-2xl text-center font-bold">
+            Aw man, you were so close!
+          </p>
+          <img src="https://i.pinimg.com/originals/55/41/31/55413151a0cb5b5c0f1eba2f714f1ebd.gif"></img>
+          <p class="text-center text-xl">
+            Here is a path you could have taken:{" "}
+            {gameData.goal?.path.map((item, i) => (
+              <div key={i} className="flex flex-row">
+                <p>{item}</p>
+                <div>
+                  {i < gameData.goal?.path.length ? (
+                    <span> ➔ </span> // Render arrow if not the last item
+                  ) : null}
+                </div>
+              </div>
+            ))}
+          </p>
           <a class="btn btn-primary" href="/">
             New game
           </a>
         </div>
       </dialog>
       <div className="bg-base-100 w-full justify-between h-10 items-center px-5 py-4 flex flex-row gap-2">
-        {history.slice(0, curIndex + 1).map((item, i) => (
-          <div key={i} className="flex flex-row gap-2">
-            <button onClick={() => handleHistoryNav(i)}>{item.title}</button>
-            <div>
-              {i < curIndex ? (
-                <span> ➔ </span> // Render arrow if not the last item
-              ) : null}
+        <div class="flex flex-row gap-2">
+          {history.slice(0, curIndex + 1).map((item, i) => (
+            <div key={i} className="flex flex-row gap-2">
+              <button onClick={() => handleHistoryNav(i)}>{item.title}</button>
+              <div>
+                {i < curIndex ? (
+                  <span> ➔ </span> // Render arrow if not the last item
+                ) : null}
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
+
         <button class="hover:underline" onClick={() => handleGiveUp()}>
           Give up
         </button>
