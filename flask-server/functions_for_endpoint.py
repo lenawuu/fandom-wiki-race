@@ -38,17 +38,36 @@ def does_path_exist(gds, domain, wiki_id_1, wiki_id_2):
     result = gds.run_cypher(query)
     return(result)
 
+
+from neo4j.graph import Node
 # returns complicated dataframe that had the correct path from start to end somewhere 
 def get_shortest_path(gds, domain, wiki_id_1, wiki_id_2):
     query = """
         MATCH(p1:Page{wiki_id:toInteger("""+str(wiki_id_1)+""") ,domain:'"""+domain+"""'}),
         (p2:Page{wiki_id:toInteger("""+str(wiki_id_2)+""") , domain:'"""+domain+"""'})
         MATCH path=shortestPath((p1)-[:HAS_LINK_TO*..10]-(p2))
-        RETURN path
+        RETURN path, apoc.path.elements(path)
         LIMIT 1
         """
+        
+        #RETURN nodes(path), relationships(path)
+        
     result = gds.run_cypher(query)
-    return(result)
+    path = result.to_dict()['apoc.path.elements(path)'][0]
+    nodes = [node for node in path if type(node) == Node]
+    
+    
+    solution = []
+    
+    for node in nodes:
+        info = {
+            'name':node.get('name'),
+            'url':node.get('url')
+            }
+        solution.append(info)
+    
+    assert len(solution) >= 1 
+    return(solution)
     
 
 #hardcoded 
@@ -69,7 +88,14 @@ if __name__=="__main__":
         print(type(are_pages_valid))
         
         # function 3 used
-        right_answer = get_shortest_path(gds=gds, domain=DOMAIN, wiki_id_1=p1['wiki_id'], wiki_id_2=p2['wiki_id'])
+        #right_answer = get_shortest_path(gds=gds, domain=DOMAIN, wiki_id_1=p1['wiki_id'], wiki_id_2=p2['wiki_id'])
+        #print(right_answer)
         
+        possible_path = get_shortest_path(gds=gds, domain=DOMAIN, wiki_id_1=p1['wiki_id'], wiki_id_2=p2['wiki_id'])
+        
+
+        
+        
+        print('ss')
     finally:
         gds.close()
