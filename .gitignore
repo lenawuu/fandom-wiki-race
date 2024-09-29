@@ -49,3 +49,8 @@ lerna-debug.log
 # System Files
 .DS_Store
 Thumbs.db
+
+# Python
+__pycache__
+pages.json
+pages_mapping.json
