@@ -3,73 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 function Homepage() {
-  const fandoms = [
-    {
-      name: "Mario Kart",
-      src: "https://assets.nintendo.com/image/upload/ar_16:9,b_auto:border,c_lpad/b_white/f_auto/q_auto/dpr_1.5/c_scale,w_400/ncom/software/switch/70070000013723/78683d87f12356c571e4541b2ef649e3bd608285139704087c552171f715e399",
-      string: "mariokart",
-      stem: "https://mariokart.fandom.com/",
-      goal: {
-        start: {
-          title: "Spiny Shell",
-          url: "https://mariokart.fandom.com/wiki/Spiny_Shell",
-        },
-        end: {
-          title: "Battle Mode",
-          url: "https://mariokart.fandom.com/wiki/Battle_Mode",
-        },
-        path: ["Spiny Shell", "Banana", "Battle Mode"],
-      },
-    },
-    {
-      name: "F-Zero",
-      src: "https://www.nintendo.com/eu/media/images/10_share_images/games_15/super_nintendo_5/H2x1_SNES_FZero.jpg",
-      string: "https://fzero.fandom.com/",
-      goal: {
-        start: {
-          title: "Captain Falcon",
-          url: "https://fzero.fandom.com/wiki/Captain_Falcon",
-        },
-        end: {
-          title: "Zoda",
-          url: "https://fzero.fandom.com/wiki/Zoda",
-        },
-        path: ["Captain Falcon", "Banana", "Zoda"],
-      },
-    },
-    {
-      name: "Burnout",
-      src: "https://assetsio.gnwcdn.com/bop08.jpg?width=1200&height=1200&fit=bounds&quality=70&format=jpg&auto=webp",
-      string: "burnout",
-      stem: "https://burnout.fandom.com/",
-      goal: {
-        start: {
-          title: "Leaves",
-          url: "https://minecraft.fandom.com/wiki/Leaves",
-        },
-        end: {
-          title: "Bone Meal",
-          url: "https://minecraft.fandom.com/wiki/Bone_Meal",
-        },
-      },
-    },
-    {
-      name: "Need For Speed",
-      src: "https://media.contentapi.ea.com/content/dam/need-for-speed/images/2017/06/nfspgenkeyartrgbhorz-16x9.jpg.adapt.crop191x100.1200w.jpg",
-      string: "nfs",
-      stem: "https://nfs.fandom.com/",
-      goal: {
-        start: {
-          title: "Leaves",
-          url: "https://minecraft.fandom.com/wiki/Leaves",
-        },
-        end: {
-          title: "Bone Meal",
-          url: "https://minecraft.fandom.com/wiki/Bone_Meal",
-        },
-      },
-    },
-  ];
+  const toggleDemo = true;
 
   const [selectedFandom, setSelectedFandom] = useState(fandoms[0]);
   const navigate = useNavigate();
@@ -80,17 +14,20 @@ function Homepage() {
   };
 
   const fetchGame = async () => {
-    try {
-      let path = selectedFandom.stem.replace(/^https?:\/\//, "");
-      path = path.slice(0, -1);
-      const response = await axios.get(
-        `http://localhost:5051/start-round?domain=${path}`
-      );
-      const game = { ...selectedFandom, goal: response.data };
-      // const response = { data: selectedFandom };
-      localStorage.setItem("game", JSON.stringify(game));
-      navigate("/game");
-    } catch (error) {}
+    if (!toggleDemo) {
+      try {
+        let path = selectedFandom.stem.replace(/^https?:\/\//, "");
+        path = path.slice(0, -1);
+        const response = await axios.get(
+          `http://localhost:5051/start-round?domain=${path}`
+        );
+        const game = { ...selectedFandom, goal: response.data };
+        // const response = { data: selectedFandom };
+        localStorage.setItem("game", JSON.stringify(game));
+        navigate("/game");
+      } catch (error) {}
+    } else {
+    }
   };
 
   return (
