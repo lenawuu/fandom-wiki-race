@@ -1,5 +1,5 @@
 import GameNav from "../components/GameNav";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import winGif from "../assets/mariokartwin.gif";
 import slayGif from "../assets/slaygif.gif";
@@ -13,6 +13,9 @@ function Game() {
   const [curURL, setCurURL] = useState("");
   const [showWinModal, setShowWinModal] = useState(false);
   const [showLoseModal, setShowLoseModal] = useState(false);
+  const [fandom, setFandom] = useState("");
+
+  const htmlRef = useRef(null);
 
   const solution = null;
   const goal = {
@@ -52,9 +55,9 @@ function Game() {
       console.log(event.currentTarget);
     }
     if (href) {
+      const stored = localStorage.getItem.apply("game");
       const url =
-        "https://minecraft.fandom.com/" +
-        href.split("://")[1].split("/").slice(1).join("/");
+        stored.stem + href.split("://")[1].split("/").slice(1).join("/");
 
       setHistory((prev) => [...prev, { title: titleFromURL(url), url: url }]);
       setCurIndex(curIndex + 1);
@@ -149,6 +152,12 @@ function Game() {
     }
   }, [showWinModal]);
 
+  useEffect(() => {
+    if (html) {
+      htmlRef.current.innerHTML = html; // Set the inner HTML
+    }
+  }, [html]);
+
   return (
     <div class="w-screen h-screen flex flex-col bg-neutral">
       <GameNav
@@ -162,10 +171,7 @@ function Game() {
           {isLoading ? (
             "loading"
           ) : (
-            <div
-              dangerouslySetInnerHTML={{ __html: html }}
-              onClick={handleLinkClick}
-            />
+            <div ref={htmlRef} onClick={handleLinkClick} />
           )}
         </div>
       </div>
