@@ -13,23 +13,6 @@ function Game() {
   const [curURL, setCurURL] = useState("");
   const [showWinModal, setShowWinModal] = useState(false);
   const [showLoseModal, setShowLoseModal] = useState(false);
-  const [gameData, setGameData] = useState({
-    name: "Mario Kart",
-    src: "https://assets.nintendo.com/image/upload/ar_16:9,b_auto:border,c_lpad/b_white/f_auto/q_auto/dpr_1.5/c_scale,w_400/ncom/software/switch/70070000013723/78683d87f12356c571e4541b2ef649e3bd608285139704087c552171f715e399",
-    string: "mariokart",
-    stem: "https://mariokart.fandom.com/",
-    goal: {
-      start: {
-        title: "Spiny Shell",
-        url: "https://mariokart.fandom.com/wiki/Spiny_Shell",
-      },
-      end: {
-        title: "Battle Mode",
-        url: "https://mariokart.fandom.com/wiki/Battle_Mode",
-      },
-      path: ["Spiny Shell", "Banana", "Battle Mode"],
-    },
-  });
 
   const htmlRef = useRef(null);
 
@@ -37,7 +20,7 @@ function Game() {
   const fetchClean = async (url) => {
     try {
       setIsLoading(true);
-      const res = await axios.post("http://localhost:8080/clean", {
+      const res = await axios.post("http://localhost:8081/clean", {
         url: url,
       });
       setHtml(res.data);
@@ -50,7 +33,8 @@ function Game() {
 
   // FIXME: handle span case ...
   const handleLinkClick = (event) => {
-    event.preventDefault();
+      event.preventDefault();
+      const gameData = localStorage.getItem("game");
 
     const href = event.target.href;
 
@@ -95,7 +79,8 @@ function Game() {
     return result;
   };
 
-  const resetGame = () => {
+    const resetGame = () => {
+        const gameData = localStorage.getItem("game");
     const winDialog = document.getElementById("winModal");
 
     // Close the modal if it's open
@@ -135,12 +120,6 @@ function Game() {
 
   // on Mount
   useEffect(() => {
-    const storedData = localStorage.getItem("game");
-    if (storedData) {
-      const parsedData = JSON.parse(storedData); // Parse the JSON string
-      setGameData(parsedData); // Set the parsed object
-      console.log(gameData.goal.end);
-    }
     resetGame();
   }, []);
 
@@ -152,7 +131,8 @@ function Game() {
     }
   }, [curIndex, history]);
 
-  useEffect(() => {
+    useEffect(() => {
+        const gameData = localStorage.getItem("game");
     if (curURL.toUpperCase() === gameData.goal.end.url.toUpperCase()) {
       setShowWinModal(true);
     }
@@ -174,7 +154,7 @@ function Game() {
   return (
     <div class="w-screen h-screen flex flex-col bg-neutral">
       <GameNav
-        goal={gameData.goal}
+              goal={localStorage.getItem("game").goal}
         numClicks={numClicks}
         handleNav={handleHistoryNav}
         curIndex={curIndex}
@@ -197,7 +177,7 @@ function Game() {
           </div>
           <div>
             <p class="text-center text-lg">
-              You got to {gameData.goal.end.name} in {numClicks} clicks!
+                          You got to {localStorage.getItem("game").goal.end.name} in {numClicks} clicks!
             </p>
             <p class="text-center text-lg">Your path: {getPath()}</p>
           </div>
@@ -224,11 +204,11 @@ function Game() {
           <img src="https://i.pinimg.com/originals/55/41/31/55413151a0cb5b5c0f1eba2f714f1ebd.gif"></img>
           <p class="text-center text-xl">
             Here is a path you could have taken:{" "}
-            {gameData.goal.path.map((item, i) => (
+                      {localStorage.getItem("game").goal.path.map((item, i) => (
               <div key={i} className="flex flex-row">
                 <p>{item.name}</p>
                 <div>
-                  {i < gameData.goal.path.length ? (
+                              {i < localStorage.getItem("game").goal.path.length ? (
                     <span> ➔ </span> // Render arrow if not the last item
                   ) : null}
                 </div>

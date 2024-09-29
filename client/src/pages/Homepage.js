@@ -83,7 +83,7 @@ function Homepage() {
     try {
       let path = selectedFandom.stem.replace(/^https?:\/\//, "");
       path = path.slice(0, -1);
-      const response = await axios.get(
+      const response = await axios.get(         
         `http://localhost:5051/start-round?domain=${path}`
       );
       const game = { ...selectedFandom, goal: response.data };
