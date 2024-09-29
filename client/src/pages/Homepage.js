@@ -86,8 +86,9 @@ function Homepage() {
       const response = await axios.get(
         `http://localhost:5051/start-round?domain=${path}`
       );
+      const game = { ...selectedFandom, goal: response.data };
       // const response = { data: selectedFandom };
-      localStorage.setItem("game", JSON.stringify(response.data));
+      localStorage.setItem("game", JSON.stringify(game));
       navigate("/game");
     } catch (error) {}
   };
