@@ -36,7 +36,9 @@ app.post("/clean", async (req, res) => {
     $("img").each((i, element) => {
       const src = $(element).attr("src");
       if (src) {
-        $(element).attr("src", new URL(src, url).href); // Make it absolute
+        const absoluteUrl = new URL(src, url).href; // Make it absolute
+        console.log(`Original src: ${src}, Absolute src: ${absoluteUrl}`); // Debug log
+        $(element).attr("src", absoluteUrl); // Set the absolute URL
       }
     });
 
@@ -57,6 +59,7 @@ app.post("/clean", async (req, res) => {
     });
 
     // Send the modified HTML
+    res.set("Access-Control-Allow-Origin", "*");
     res.send($.html());
   } catch (error) {
     res.status(500).send(`Error: ${error.message}`);

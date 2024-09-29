@@ -121,6 +121,11 @@ function Game() {
   // on Mount
   useEffect(() => {
     resetGame();
+    // TODO: Handle when we get API
+    const storedData = localStorage.getItem("game");
+    if (storedData) {
+      console.log(JSON.parse(storedData));
+    }
   }, []);
 
   useEffect(() => {
@@ -140,7 +145,7 @@ function Game() {
   useEffect(() => {
     if (showWinModal) {
       const dialog = document.getElementById("winModal");
-      dialog.showWinModal();
+      dialog.showModal();
     }
   }, [showWinModal]);
 
@@ -194,8 +199,13 @@ function Game() {
       </dialog>
       <dialog id="loseModal">
         <div class="modal-box flex flex-col gap-4 justify-center">
-          <p>Aw man, you were so close!</p>
-          <p>Here is a path you could have taken: {solution} </p>
+          <p class="text-2xl text-center font-bold">
+            Aw man, you were so close!
+          </p>
+          <img src="https://i.pinimg.com/originals/55/41/31/55413151a0cb5b5c0f1eba2f714f1ebd.gif"></img>
+          <p class="text-center text-xl">
+            Here is a path you could have taken: {solution}{" "}
+          </p>
           <a class="btn btn-primary" href="/">
             New game
           </a>
