@@ -49,6 +49,7 @@ app.post("/clean", async (req, res) => {
       "footer.global-footer",
       "div.top-ads-container",
       "div.page__right-rail",
+      "#WikiaBar",
     ];
 
     toDelete.forEach((selector) => {
