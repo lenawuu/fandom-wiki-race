@@ -19,9 +19,9 @@ def main():
     with open(relative_fandom_folder_path + "pages_mapping.json", "r") as file:
         mapping = json.loads(file.read())
 
-    add_links_to_objects(data)
+    processed_data = process_data_to_links(data)
 
-    ids_mapped = map_ids(data, mapping)
+    ids_mapped = map_ids(processed_data, mapping)
 
     with open(
         relative_fandom_folder_path + f"{settings.fandom_page}_page_links.csv", "w"
@@ -48,12 +48,13 @@ def map_ids(data, mapping):
     return ids_mapped
 
 
-def add_links_to_objects(data):
-    # with Pool(1) as p:
-    #     p.map(create_links_from_object, data)
-    for object in data:
-        links = create_links_from_object(object)
-        object["links"] = links
+def process_data_to_links(data):
+    with Pool(250) as p:
+        processed_data = p.map(create_links_from_object, data)
+    return processed_data
+    # for object in data:
+    #     links = create_links_from_object(object)
+    #     object["links"] = links
 
 
 def create_links_from_object(object):
@@ -70,7 +71,7 @@ def create_links_from_object(object):
         link = href.split("#")[0]
         links.add(link)
     links = list(links)
-    return links
+    return {"links": links, "domain": object["domain"]}
 
 
 def find_links_from_url(url):
