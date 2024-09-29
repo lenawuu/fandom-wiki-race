@@ -8,21 +8,21 @@ function Game() {
   const [numClicks, setNumClicks] = useState(0);
   const [html, setHtml] = useState(null);
   const [history, setHistory] = useState([]);
-  const [urlIndex, setUrlIndex] = useState(0);
+  const [curIndex, setCurIndex] = useState(0);
   const [curURL, setCurURL] = useState("");
 
   const goal = {
     start: {
-      name: "Leaves",
+      title: "Leaves",
       url: "https://minecraft.fandom.com/wiki/Leaves",
     },
     end: {
-      name: "Bone Meal",
+      title: "Bone Meal",
       url: "https://minecraft.fandom.com/wiki/Bone_Meal",
     },
   };
 
-  //TODO: Implement page cache
+  //TODO: Implement page cache, load images, wait til css loads timeout
   const fetchClean = async (url) => {
     try {
       setIsLoading(true);
@@ -41,38 +41,76 @@ function Game() {
     event.preventDefault();
 
     const href = event.target.href;
-    const url =
-      "https://minecraft.fandom.com/" +
-      href.split("://")[1].split("/").slice(1).join("/");
+    if (href) {
+      const url =
+        "https://minecraft.fandom.com/" +
+        href.split("://")[1].split("/").slice(1).join("/");
 
-    setHistory((prev) => [...prev, url]);
-    setUrlIndex(urlIndex + 1);
+      setHistory((prev) => [...prev, { title: titleFromURL(url), url: url }]);
+      setCurIndex(curIndex + 1);
+    }
+  };
+
+  const titleFromURL = (url) => {
+    const title = url.substring(url.lastIndexOf("/") + 1).replace(/_/g, " ");
+
+    const formattedTitle = title
+      .split(" ")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
+
+    return formattedTitle;
   };
 
   // on Mount
   useEffect(() => {
-    setHistory([goal.start.url]);
+    setHistory([{ title: titleFromURL(goal.start.url), url: goal.start.url }]);
     fetchClean(goal.start.url);
+    setCurURL(goal.start.url);
   }, []);
 
   useEffect(() => {
-    if (urlIndex < history.length) {
-      fetchClean(history[urlIndex]); // Use the current URL from history directly
+    if (curIndex < history.length) {
+      const url = history[curIndex].url;
+      fetchClean(url);
+      setCurURL(url);
     }
-  }, [urlIndex, history]);
+  }, [curIndex, history]);
+
+  useEffect(() => {
+    if (curURL.toUpperCase() === goal.end.url.toUpperCase()) {
+      alert("you won!");
+    }
+  }, [curURL]);
 
   return (
-    <div class="w-screen h-screen">
+    <div class="w-screen h-screen flex flex-col">
       <GameNav goal={goal} numClicks={numClicks} />
-      <div>
-        {isLoading ? (
-          "loading"
-        ) : (
-          <div
-            dangerouslySetInnerHTML={{ __html: html }}
-            onClick={handleLinkClick}
-          />
-        )}
+      <div class="bg-slate-500 flex-1 overflow-hidden py-2 px-4">
+        <div class="h-full w-full overflow-y-auto">
+          {isLoading ? (
+            "loading"
+          ) : (
+            <div
+              dangerouslySetInnerHTML={{ __html: html }}
+              onClick={handleLinkClick}
+            />
+          )}
+        </div>
+      </div>
+      <div class="bg-white w-full justify-start">
+        <div class="flex flex-row">
+          {history.slice(0, curIndex + 1).map((item, i) => (
+            <div key={i}>
+              {item.title}
+              <div>
+                {i < curIndex + 1 ? (
+                  <span> ➔ </span> // Render arrow if not the last item
+                ) : null}
+              </div>
+            </div> // Use parentheses to implicitly return the JSX
+          ))}
+        </div>
       </div>
     </div>
   );

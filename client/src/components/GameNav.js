@@ -4,7 +4,7 @@ import { ReactComponent as RightArrowSVG } from "../assets/arrow-right.svg";
 
 function GameNav({ goal, numClicks }) {
   return (
-    <nav>
+    <nav class="bg-white">
       <div id="buttonGroup">
         <Button>
           <LeftArrowSVG />
@@ -14,7 +14,7 @@ function GameNav({ goal, numClicks }) {
         </Button>
         <div>
           <p>
-            {goal.start.name} → {goal.end.name}
+            {goal.start.title} → {goal.end.title}
           </p>
         </div>
         <div>
