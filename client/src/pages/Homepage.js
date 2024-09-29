@@ -18,6 +18,7 @@ function Homepage() {
           title: "Battle Mode",
           url: "https://mariokart.fandom.com/wiki/Battle_Mode",
         },
+        path: ["Spiny Shell", "Banana", "Battle Mode"],
       },
     },
     {
@@ -33,6 +34,7 @@ function Homepage() {
           title: "Zoda",
           url: "https://fzero.fandom.com/wiki/Zoda",
         },
+        path: ["Captain Falcon", "Banana", "Zoda"],
       },
     },
     {
