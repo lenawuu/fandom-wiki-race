@@ -13,35 +13,36 @@ NEO4J_PASSWORD = os.environ['NEO4J_PASSWORD']
 app = Flask(__name__)
 CORS(app)  # Enable CORS to allow the frontend to communicate with the backend
 
-@app.route("/get-path")
-def get_path(wiki_domain:str):
+@app.route("/start-round", methods=['GET'])
+def get_path():
+    #print("endpoint triggered")
+    wiki_domain = 'mariokart.fandom.com'
+    path_res = []
     pages = ffe.get_two_random_pages(gds=gds, domain=wiki_domain)
     p1 = {'name':pages['p1'][0].get('name'), 'url':pages['p1'][0].get('url'), 'wiki_id':pages['p1'][0].get('wiki_id')}
     p2 = {'name':pages['p2'][0].get('name'), 'url':pages['p2'][0].get('url'), 'wiki_id':pages['p2'][0].get('wiki_id')}
 
-    if ffe.are_pages_valid[0][0] == True:
-        ffe.get_shortest_path(gds=gds, domain=wiki_domain, wiki_id_1=p1['wiki_id'], wiki_id_2=p2['wiki_id'])
+    if ffe.does_path_exist(gds=gds, domain=wiki_domain, wiki_id_1=p1['wiki_id'], wiki_id_2=p2['wiki_id'])['pathExists'][0] == True:
+        path_res = ffe.get_shortest_path(gds=gds, domain=wiki_domain, wiki_id_1=p1['wiki_id'], wiki_id_2=p2['wiki_id'])
     else:
         exit()
     
     # clean p1
-    p1_res = 0
+    p1_res = {'name':p1['name'],'url':p1['url']}
 
     # clean p2
-    p2_res = 0
+    p2_res = {'name':p2['name'],'url':p2['url']}
 
-    # clean path to a list of jsons
-    path_res = 0 
 
-    ans = {'start':{'name':p1_res['name'], 'url':p1_res['url']},
-           'end':{'name':p2_res['name'], 'url':p2_res['url']},
-           'path':[path_res],
+    ans = {'start':p1_res,
+            'end':p2_res,
+           'path':path_res,
            }
     
     return ans
     
 
 if __name__ == '__main__':
-    gds = GraphDataScience(NEO4J_URI, NEO4J_USER, NEO4J_PASSWORD)
+    gds = GraphDataScience(NEO4J_URI, auth=(NEO4J_USER, NEO4J_PASSWORD))
 
-    app.run(port=5000, debug=True)
+    app.run(port=5051, debug=True)
