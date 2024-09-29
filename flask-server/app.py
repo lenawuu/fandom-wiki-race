@@ -11,7 +11,7 @@ NEO4J_USER = os.environ['NEO4J_USER']
 NEO4J_PASSWORD = os.environ['NEO4J_PASSWORD']
 
 app = Flask(__name__)
-CORS(app)  # Enable CORS to allow the frontend to communicate with the backend
+CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}}, supports_credentials=True)  # Enable CORS to allow the frontend to communicate with the backend
 
 
 # usage /start-round?domain=mariokart
