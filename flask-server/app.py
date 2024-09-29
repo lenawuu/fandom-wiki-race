@@ -13,12 +13,21 @@ NEO4J_PASSWORD = os.environ['NEO4J_PASSWORD']
 app = Flask(__name__)
 CORS(app)  # Enable CORS to allow the frontend to communicate with the backend
 
+
+# usage /start-round?domain=mariokart
 @app.route("/start-round", methods=['GET'])
 def get_path():
     #print("endpoint triggered")
-    wiki_domain = 'mariokart.fandom.com'
+    #wiki_domain = 'mariokart.fandom.com'
+    wiki_domain = request.args.get('domain', default=None, type=str)
+    #wiki_domain = wiki_domain + '.fandom.com'
+
+
     path_res = []
     pages = ffe.get_two_random_pages(gds=gds, domain=wiki_domain)
+    
+    #return(wiki_domain)    
+    #return (pages.to_dict())
     p1 = {'name':pages['p1'][0].get('name'), 'url':pages['p1'][0].get('url'), 'wiki_id':pages['p1'][0].get('wiki_id')}
     p2 = {'name':pages['p2'][0].get('name'), 'url':pages['p2'][0].get('url'), 'wiki_id':pages['p2'][0].get('wiki_id')}
 
@@ -36,13 +45,16 @@ def get_path():
 
     ans = {'start':p1_res,
             'end':p2_res,
-           'path':path_res,
-           }
+            'path':path_res,
+            }
     
     return ans
     
 
 if __name__ == '__main__':
-    gds = GraphDataScience(NEO4J_URI, auth=(NEO4J_USER, NEO4J_PASSWORD))
+    try:
+        gds = GraphDataScience(NEO4J_URI, auth=(NEO4J_USER, NEO4J_PASSWORD))
 
-    app.run(port=5051, debug=True)
+        app.run(port=5051, debug=True)
+    finally:
+        gds.close()

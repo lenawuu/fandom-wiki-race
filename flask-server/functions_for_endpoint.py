@@ -21,10 +21,11 @@ def get_two_random_pages(gds, domain):
         WITH min(p.wiki_id) as minId, max(p.wiki_id) as maxId
         WITH maxId, minId, floor(rand() * (maxId - minId + 1) + minId) AS randId1, floor(rand() * (maxId - minId + 1) + minId) AS randId2
         WHERE randId1 <> randId2
-        MATCH (p1:Page {wiki_id: randId1,domain:'mariokart.fandom.com'}), (p2:Page {wiki_id: randId2,domain:'mariokart.fandom.com'})
+        MATCH (p1:Page {wiki_id: randId1,domain:'""" + domain + """'}), (p2:Page {wiki_id: randId2,domain:'""" + domain + """'})
         RETURN p1, p2
         LIMIT 1
         """
+    
     result = gds.run_cypher(query)
     return(result)
 
@@ -71,7 +72,7 @@ def get_shortest_path(gds, domain, wiki_id_1, wiki_id_2):
     
 
 #hardcoded 
-DOMAIN = 'mariokart.fandom.com'
+DOMAIN = 'fzero.fandom.com'
 
 if __name__=="__main__": 
     try: 
