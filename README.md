@@ -52,8 +52,7 @@ git clone https://github.com/lenawuu/fandom-wiki-race.git && cd fandom-wiki-race
 The following command will install the required node dependencies for the project. Make sure you are still navigated to your fandom-wiki-race folder
 
 ```sh
-npm i &&
-npm i --prefix ./client && npm i --prefix ./server npm i
+npm i && npm i --prefix ./client && npm i --prefix ./server npm i
 ```
 
 ### Run the application
