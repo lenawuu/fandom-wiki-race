@@ -5,6 +5,7 @@ import axios from "axios";
 function Homepage() {
   const toggleDemo = true;
 
+  let fandoms;
   fandoms = [
     {
       name: "Mario Kart",
