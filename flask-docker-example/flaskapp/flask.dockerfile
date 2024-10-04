@@ -1,7 +1,7 @@
 # DOCKERFILE: TODO - Change the Python Version
 
 # Change once we know what python version we will use
-FROM python: 3.6-slim-buster
+FROM python:3.6-slim-buster
 
 # Create a directory that the app runs inside for the container
 # This creates a folder for us to use in docker

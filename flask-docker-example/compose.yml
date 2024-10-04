@@ -6,7 +6,7 @@ services:
     image: flaskapp:1.0.0
     build:
       context: ./flaskapp
-      dockerfile: Dockerfile
+      dockerfile: flask.dockerfile
     ports:
       - 4000:4000
     environment:
