@@ -1,6 +1,6 @@
 # Endpoint List
 
-This is a list of all exiting and planned endpoints for the project
+This is a list of all existing and planned endpoints for the project
 
 Currently we have:
 

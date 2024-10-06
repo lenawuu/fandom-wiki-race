@@ -5,8 +5,8 @@ from os import environ
 
 app = Flask(__name__)
 CORS(app) # Enable CORS for all routes
-# app.config['SQLALCHEMY_DATABASE_URI'] = environ.get('DATABASE_URL') REPLACE WHEN DB IS SET UP
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite://test.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = environ.get('DATABASE_URL')
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite://test.db'
 db = SQLAlchemy(app)
 
 
@@ -44,10 +44,10 @@ db.create_all()
 
 # CREATE GAME(S)::
 
-@app.route('/api/game')
+@app.route('/api/game', methods=['POST'])
 def create_game():
     try:
-        data = request.get_json()
+        data = request.get_json(force=True)
         new_game = Game(start=data['start'], end=data['end'], route=data['route'])
         db.session.add(new_game)
         db.session.commit()
@@ -117,7 +117,7 @@ def delete_game_by_id(id):
 
         if game:
             db.session.delete(game)
-            db.session.commit
+            db.session.commit()
             return make_response(jsonify({'message':f'game {id} was deleted'}), 200)
         
         return make_response(jsonify({'message':f'game {id} does not exit'}), 404)
