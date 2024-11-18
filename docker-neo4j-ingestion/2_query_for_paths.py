@@ -54,5 +54,6 @@ if __name__=="__main__":
         try:
             gds = GraphDataScience(NEO4J_URI, auth=(NEO4J_USER, NEO4J_PASSWORD))
             result = gds.run_cypher("MATCH (n) RETURN count(n) as totalNodes")
+            print(f"found {result['totalNodes'].tolist()[0]} nodes in the container's database")
         finally:
             gds.close()
