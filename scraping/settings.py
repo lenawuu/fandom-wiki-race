@@ -1,2 +1,2 @@
-fandom_page = "nfs"
-# fandom_page = "hiberious-monsters"
+fandom_pages = ["hiberious-monsters", "mariokart"]
+starting_index = 0
