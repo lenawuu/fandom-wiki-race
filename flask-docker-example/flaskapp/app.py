@@ -1,3 +1,9 @@
+# TODO: Write Dummy Endpoints to test with Frontend
+# TODO: Change DB to match new schema
+# We need...
+#   - Get Game By ID
+#   -
+
 from flask import Flask, request, jsonify, make_response
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
@@ -18,7 +24,7 @@ class User(db.Model):
 
     def json(self):
         return {'id':self.id, 'name':self.name, 'email':self.email}
-    
+
 class Game(db.Model):
     __tablename__ = 'games'
     id = db.Column(db.Integer, primary_key=True)
@@ -87,7 +93,7 @@ def get_game_by_id(id):
 
     except Exception as e:
         return make_response(jsonify({'message':f'error getting game {id}', 'error':str(e)}), 500)
-    
+
 # UPDATE GAME(S)::
 
 @app.route('/api/game/<id>', methods=['PUT'])
@@ -102,7 +108,7 @@ def update_game_by_id(id):
             game.route = data['route']
             db.session.commit()
             return make_response(jsonify({'message':f'game {id} updated'}), 200)
-        
+
         return make_response(jsonify({'message':f'game {id} not found'}), 404)
 
     except Exception as e:
@@ -119,7 +125,7 @@ def delete_game_by_id(id):
             db.session.delete(game)
             db.session.commit()
             return make_response(jsonify({'message':f'game {id} was deleted'}), 200)
-        
+
         return make_response(jsonify({'message':f'game {id} does not exit'}), 404)
 
     except Exception as e:
@@ -188,7 +194,7 @@ def update_user_by_id(id):
             user.email = data['email']
             db.session.commit()
             return make_response(jsonify({'message':f'user {id} updated'}), 200)
-        
+
         return make_response(jsonify({'message':f'user {id} not found'}), 404)
 
     except Exception as e:
@@ -204,7 +210,7 @@ def delete_user_by_id(id):
             db.session.delete(user)
             db.session.commit
             return make_response(jsonify({'message':f'user {id} was deleted'}), 200)
-        
+
         return make_response(jsonify({'message':f'user {id} does not exit'}), 404)
 
     except Exception as e:
