@@ -44,46 +44,67 @@ db.create_all()
 #   - Get All Games (for listing all previous games on the frontend)
 
 test_game_1 = {
-    'id':1,
-    'start': {
-        'title':'title',
-        'url':'url'
+    "id": 1,
+    "start": {
+        "title": "Item",
+        "url": "https://mariokart.fandom.com/wiki/Item"
     },
-    'end': {
-        'title':'title',
-        'url':'url'
+    "end": {
+        "title": "Pianta",
+        "url": "https://mariokart.fandom.com/wiki/Pianta"
     },
-    'route': {
-        'titles': ['title1','title2','title3','title4'],
-        'urls': ['url1','url2','url3','url4'],
+    "route": {
+        "titles": [
+            "Item",
+            "Mario Kart 8 Deluxe",
+            "Pianta"
+        ],
+        "urls": [
+            "https://mariokart.fandom.com/wiki/Item",
+            "https://mariokart.fandom.com/wiki/Mario_Kart_8_Deluxe",
+            "https://mariokart.fandom.com/wiki/Pianta"
+        ]
     },
-    'fandom_domain': 'minecraft'
+    "fandom_domain": "mariokart.fandom.com",
+    "route_length": 2
 }
 
 test_game_2 = {
-    'id':1,
-    'start': {
-        'title':'title',
-        'url':'url'
+    "id": 2,
+    "start": {
+        "title": "ATV",
+        "url": "https://mariokart.fandom.com/wiki/ATV"
     },
-    'end': {
-        'title':'title',
-        'url':'url'
+    "end": {
+        "title": "Mario Kart Arcade GP VR",
+        "url": "https://mariokart.fandom.com/wiki/Mario_Kart_Arcade_GP_VR"
     },
-    'route': {
-        'titles': ['title1','title2','title3','title4'],
-        'urls': ['url1','url2','url3','url4'],
+    "route": {
+        "titles": [
+            "ATV",
+            "Princess Peach",
+            "Mario Kart Arcade GP VR"
+        ],
+        "urls": [
+            "https://mariokart.fandom.com/wiki/ATV",
+            "https://mariokart.fandom.com/wiki/Princess_Peach",
+            "https://mariokart.fandom.com/wiki/Mario_Kart_Arcade_GP_VR"
+        ]
     },
-    'fandom_domain': 'minecraft'
+    "fandom_domain": "mariokart.fandom.com",
+    "route_length": 2
 }
+
+games = list()
+games.append(test_game_1)
+games.append(test_game_2)
+
 ########################################################################################################################
 
 @app.route('/api/game', methods=['GET'])
 def test_get_all_games():
     try:
-        games = Game.query.all()
-        games_data = [{'id': game.id, 'start': game.start, 'end': game.end, 'route': game.route} for game in games] # put everything in a json
-        return jsonify(games_data), 200
+        return jsonify(games), 200
     except Exception as e:
         return make_response(jsonify({'message':'error getting games', 'error':str(e)}), 500)
 
@@ -91,12 +112,14 @@ def test_get_all_games():
 @app.route('/api/game/<id>', methods=['GET'])
 def test_get_game_by_id(id):
     try:
-        game = Game.query.filter_by(id=id).first() # pull the first Game with a matching ID from the db
+        if id==1:
+            game = games[0]
+        elif id==2:
+            game=games[1]
+        else:
+            return make_response(jsonify({'message':f'game {id} not found'}), 404)
 
-        if game: #if the game exists
-            return make_response(jsonify({'game':game.json()}), 200)
-
-        return make_response(jsonify({'message':f'game {id} not found'}), 404)
+        return make_response(jsonify({'game':game.json()}), 200)
 
     except Exception as e:
         return make_response(jsonify({'message':f'error getting game {id}', 'error':str(e)}), 500)
