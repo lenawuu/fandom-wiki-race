@@ -38,6 +38,70 @@ class Game(db.Model):
 db.create_all()
 
 ########################################################################################################################
+# TESTING CRUD ROUTES::
+# - We Need...
+#   - Get Game By ID (for pulling the game of the day, id will be 1)
+#   - Get All Games (for listing all previous games on the frontend)
+
+test_game_1 = {
+    'id':1,
+    'start': {
+        'title':'title',
+        'url':'url'
+    },
+    'end': {
+        'title':'title',
+        'url':'url'
+    },
+    'route': {
+        'titles': ['title1','title2','title3','title4'],
+        'urls': ['url1','url2','url3','url4'],
+    },
+    'fandom_domain': 'minecraft'
+}
+
+test_game_2 = {
+    'id':1,
+    'start': {
+        'title':'title',
+        'url':'url'
+    },
+    'end': {
+        'title':'title',
+        'url':'url'
+    },
+    'route': {
+        'titles': ['title1','title2','title3','title4'],
+        'urls': ['url1','url2','url3','url4'],
+    },
+    'fandom_domain': 'minecraft'
+}
+########################################################################################################################
+
+@app.route('/api/game', methods=['GET'])
+def test_get_all_games():
+    try:
+        games = Game.query.all()
+        games_data = [{'id': game.id, 'start': game.start, 'end': game.end, 'route': game.route} for game in games] # put everything in a json
+        return jsonify(games_data), 200
+    except Exception as e:
+        return make_response(jsonify({'message':'error getting games', 'error':str(e)}), 500)
+
+
+@app.route('/api/game/<id>', methods=['GET'])
+def test_get_game_by_id(id):
+    try:
+        game = Game.query.filter_by(id=id).first() # pull the first Game with a matching ID from the db
+
+        if game: #if the game exists
+            return make_response(jsonify({'game':game.json()}), 200)
+
+        return make_response(jsonify({'message':f'game {id} not found'}), 404)
+
+    except Exception as e:
+        return make_response(jsonify({'message':f'error getting game {id}', 'error':str(e)}), 500)
+
+########################################################################################################################
 # GAME CRUD ROUTES::
 # - We Need...
 #   - Get Game By ID (for pulling the game of the day)
