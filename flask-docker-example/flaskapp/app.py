@@ -161,25 +161,25 @@ games.append(test_game_2)
             ################################################################################################
 
 # TEST ROUTES - REPLACE IN FRONTEND
-@app.route('/api/game', methods=['GET'])
+@app.route('/api/test_game', methods=['GET'])
 def test_get_all_games():
     try:
-        return jsonify(games), 200
+        return make_response(jsonify(games), 200)
     except Exception as e:
         return make_response(jsonify({'message':'error getting games', 'error':str(e)}), 500)
 
 
-@app.route('/api/game/<id>', methods=['GET'])
+@app.route('/api/test_game/<id>', methods=['GET'])
 def test_get_game_by_id(id):
     try:
-        if id==1:
+        if (id==0 or id=='0'):
             game = games[0]
-        elif id==2:
+        elif (id==1 or id=='1'):
             game=games[1]
         else:
             return make_response(jsonify({'message':f'game {id} not found'}), 404)
 
-        return make_response(jsonify({'game':game.json()}), 200)
+        return make_response(jsonify({'game':dict(game)}), 200)
 
     except Exception as e:
         return make_response(jsonify({'message':f'error getting game {id}', 'error':str(e)}), 500)
