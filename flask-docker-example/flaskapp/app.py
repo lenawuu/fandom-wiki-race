@@ -6,7 +6,7 @@
 
 from flask import Flask, request, jsonify, make_response
 from flask_sqlalchemy import SQLAlchemy
-from flask_sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship
 from flask_cors import CORS
 from os import environ
 
@@ -43,7 +43,7 @@ class Game(db.Model):
 # NEW SCHEMA
 #   - Uses a 3NF Form to store arrays (Location is for start and end)
 
-class Game(db.model):
+class Game(db.Model):
     __tablenameA__ = 'games'
     id = db.Column(db.Integer, primary_key=True)
     fandom_domain = db.Column(db.String(100), nullable=False)
@@ -84,13 +84,14 @@ class Location(db.Model):
 class Route(db.Model):
     __tablename__ = 'routes'
     id = db.Column(db.Integer, primary_key=True)
-    game_id = db.Column(db.Integer, db.ForeignKey('games.id'), nullable=False)
+    game_id = db.Column(db.Integer, db.ForeignKey('game.id'), nullable=False)
     title = db.Column(db.String(200), nullable=False)
     url = db.Column(db.String(500), nullable=False)
 
     game = relationship("Game", back_populates="route")
 
-db.create_all()
+with app.app_context():
+    db.create_all()
 
 ########################################################################################################################
 # TESTING CRUD ROUTES::
