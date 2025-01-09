@@ -5,6 +5,23 @@ import winGif from "../assets/mariokartwin.gif";
 import slayGif from "../assets/slaygif.gif";
 
 function Game() {
+  const [gameData, setGameData] = useState({
+    name: "",
+    src: "",
+    string: "",
+    stem: "",
+    goal: {
+      start: {
+        name: "",
+        url: "",
+      },
+      end: {
+        name: "",
+        url: "",
+      },
+      path: [],
+    },
+  });
   const [isLoading, setIsLoading] = useState(true);
   const [numClicks, setNumClicks] = useState(0);
   const [html, setHtml] = useState(null);
@@ -12,7 +29,6 @@ function Game() {
   const [curIndex, setCurIndex] = useState(0);
   const [curURL, setCurURL] = useState("");
   const [showWinModal, setShowWinModal] = useState(false);
-  const [showLoseModal, setShowLoseModal] = useState(false);
 
   const htmlRef = useRef(null);
 
@@ -33,8 +49,7 @@ function Game() {
 
   // FIXME: handle span case ...
   const handleLinkClick = (event) => {
-      event.preventDefault();
-      const gameData = localStorage.getItem("game");
+    event.preventDefault();
 
     const href = event.target.href;
 
@@ -79,8 +94,9 @@ function Game() {
     return result;
   };
 
-    const resetGame = () => {
-        const gameData = localStorage.getItem("game");
+  const resetGame = () => {
+    // Necessary because of setState inside useEffect
+    const localGameData = JSON.parse(localStorage.getItem("game"));
     const winDialog = document.getElementById("winModal");
 
     // Close the modal if it's open
@@ -93,22 +109,19 @@ function Game() {
       }
     }
 
-    const goal = gameData.goal;
-
-    if (gameData.goal) {
+    if (localGameData.goal) {
       // Check if gameData.goal exists
       setHistory([
         {
-          title: gameData.goal.start.name,
-          url: gameData.goal.start.url,
+          title: localGameData.goal.start.title,
+          url: localGameData.goal.start.url,
         },
       ]);
-      fetchClean(gameData.goal.start.url);
-      setCurURL(gameData.goal.start.url);
+      fetchClean(localGameData.goal.start.url);
+      setCurURL(localGameData.goal.start.url);
     }
 
     setShowWinModal(false);
-    setShowLoseModal(false);
     setNumClicks(0);
     setCurIndex(0);
   };
@@ -120,18 +133,23 @@ function Game() {
 
   // on Mount
   useEffect(() => {
-    let gameData;
-    const fetchGame = async() => {
+    // ! add this when the backend is ready
+    const fetchGame = async () => {
       try {
-        const response = await axios.get('http://localhost:5051/get-current')
+        const response = await axios.get("http://localhost:5051/get-current");
         gameData = response.data;
 
         try {
           // const response = await axios.post('http://localhost:8081/gamedata', { fandom: gameData.});
-        } catch(err) {}
-      } catch(err) {}
+        } catch (err) {}
+      } catch (err) {}
+    };
+
+    if (localStorage.getItem("game")) {
+      const game = JSON.parse(localStorage.getItem("game"));
+      setGameData(game);
+      resetGame();
     }
-    resetGame();
   }, []);
 
   useEffect(() => {
@@ -142,12 +160,14 @@ function Game() {
     }
   }, [curIndex, history]);
 
-    useEffect(() => {
-        const gameData = localStorage.getItem("game");
-    if (curURL.toUpperCase() === gameData.goal.end.url.toUpperCase()) {
+  useEffect(() => {
+    if (
+      curURL.toUpperCase() === gameData.goal.end.url.toUpperCase() &&
+      gameData.goal.end.url !== ""
+    ) {
       setShowWinModal(true);
     }
-  }, [curURL]);
+  }, [curURL, gameData.goal.end.url]);
 
   useEffect(() => {
     if (showWinModal) {
@@ -165,15 +185,15 @@ function Game() {
   return (
     <div class="w-screen h-screen flex flex-col bg-neutral">
       <GameNav
-              goal={localStorage.getItem("game").goal}
         numClicks={numClicks}
         handleNav={handleHistoryNav}
         curIndex={curIndex}
+        goal={gameData.goal}
       />
       <div class="flex-1 overflow-hidden py-2 px-4">
         <div class="h-full w-full overflow-y-auto">
           {isLoading ? (
-            "loading"
+            "Loading"
           ) : (
             <div ref={htmlRef} onClick={handleLinkClick} />
           )}
@@ -188,7 +208,7 @@ function Game() {
           </div>
           <div>
             <p class="text-center text-lg">
-                          You got to {localStorage.getItem("game").goal.end.name} in {numClicks} clicks!
+              You got to {gameData.goal.end.name} in {numClicks} clicks!
             </p>
             <p class="text-center text-lg">Your path: {getPath()}</p>
           </div>
@@ -215,11 +235,11 @@ function Game() {
           <img src="https://i.pinimg.com/originals/55/41/31/55413151a0cb5b5c0f1eba2f714f1ebd.gif"></img>
           <p class="text-center text-xl">
             Here is a path you could have taken:{" "}
-                      {localStorage.getItem("game").goal.path.map((item, i) => (
+            {gameData.goal.path.map((item, i) => (
               <div key={i} className="flex flex-row">
                 <p>{item.name}</p>
                 <div>
-                              {i < localStorage.getItem("game").goal.path.length ? (
+                  {i < gameData.goal.path.length ? (
                     <span> ➔ </span> // Render arrow if not the last item
                   ) : null}
                 </div>
