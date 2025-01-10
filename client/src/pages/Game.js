@@ -60,7 +60,19 @@ function Game() {
       const url =
         gameData.stem + href.split("://")[1].split("/").slice(1).join("/");
 
-      setHistory((prev) => [...prev, { title: titleFromURL(url), url: url }]);
+      if (
+        history[curIndex + 1] &&
+        JSON.stringify({ title: titleFromURL(url), url: url }) !==
+          history[curIndex + 1]
+      ) {
+        setHistory((prev) => [
+          ...prev.slice(0, curIndex + 1),
+          { title: titleFromURL(url), url: url },
+        ]);
+      } else {
+        setHistory((prev) => [...prev, { title: titleFromURL(url), url: url }]);
+      }
+
       setCurIndex(curIndex + 1);
       setNumClicks(numClicks + 1);
     }
@@ -78,7 +90,7 @@ function Game() {
   };
 
   const handleHistoryNav = (index) => {
-    if (curIndex > 0 && curIndex < history.length) {
+    if (index < history.length && index > -1) {
       setCurIndex(index);
       setNumClicks(numClicks + 1);
     }
