@@ -5,8 +5,7 @@ import axios from "axios";
 function Homepage() {
   const toggleDemo = true;
 
-  let fandoms;
-  fandoms = [
+  const fandoms = [
     {
       name: "Mario Kart",
       src: "https://assets.nintendo.com/image/upload/ar_16:9,b_auto:border,c_lpad/b_white/f_auto/q_auto/dpr_1.5/c_scale,w_400/ncom/software/switch/70070000013723/78683d87f12356c571e4541b2ef649e3bd608285139704087c552171f715e399",
@@ -102,15 +101,13 @@ function Homepage() {
       try {
         let path = selectedFandom.stem.replace(/^https?:\/\//, "");
         path = path.slice(0, -1);
-        await axios.get(
-          `http://localhost:5051/start-round?domain=${path}`
-        );
+        await axios.get(`http://localhost:5051/start-round?domain=${path}`);
         // const response = { data: selectedFandom };
-        localStorage.setItem("fandom", selectedFandom.name);
-        navigate("/game");
       } catch (error) {}
     } else {
     }
+    localStorage.setItem("fandom", selectedFandom.name);
+    navigate("/game");
   };
 
   return (
