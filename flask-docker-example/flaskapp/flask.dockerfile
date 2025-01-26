@@ -20,4 +20,4 @@ COPY . .
 EXPOSE 4000
 
 # Prompts CMD to run the flask app
-CMD [ "flask", "run", "--host=0.0.0.0", "--port=4000"]
+CMD [ "flask", "run", "--host=0.0.0.0", "--port=4000", "--debug"]

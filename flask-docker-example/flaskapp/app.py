@@ -161,6 +161,20 @@ games.append(test_game_2)
             ################################################################################################
 
 # TEST ROUTES - REPLACE IN FRONTEND
+
+@app.route('/api/test/new_game', methods=['GET'])
+def start_new_game():
+    # get selected fandom from the url params
+    fandom = request.args.get('fandom', default = '', type = str)
+
+    # then here you would set the current game to the game that the db returns
+    current_game = test_game_1
+
+    raise TypeError(f"selected fandom is {fandom}")
+
+    return make_response(jsonify(current_game), 200)
+
+
 @app.route('/api/test_game', methods=['GET'])
 def test_get_all_games():
     try:

@@ -2,6 +2,8 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
+const API_PORT = 4000;
+
 function Homepage() {
   const toggleDemo = true;
 
@@ -11,80 +13,17 @@ function Homepage() {
       src: "https://assets.nintendo.com/image/upload/ar_16:9,b_auto:border,c_lpad/b_white/f_auto/q_auto/dpr_1.5/c_scale,w_400/ncom/software/switch/70070000013723/78683d87f12356c571e4541b2ef649e3bd608285139704087c552171f715e399",
       string: "mariokart",
       stem: "https://mariokart.fandom.com/",
-      goal: {
-        start: {
-          title: "Toad Harbor",
-          url: "https://mariokart.fandom.com/wiki/Toad_Harbor",
-        },
-        end: {
-          title: "The Train",
-          url: "https://mariokart.fandom.com/wiki/The_Train",
-        },
-        path: ["Toad Harbor", "Coin", "The Train"],
-      },
     },
     {
       name: "F-Zero",
       src: "https://www.nintendo.com/eu/media/images/10_share_images/games_15/super_nintendo_5/H2x1_SNES_FZero.jpg",
       string: "https://fzero.fandom.com/",
-      goal: {
-        start: {
-          title: "Magic Seagull",
-          url: "https://fzero.fandom.com/wiki/Magic_Seagull",
-        },
-        end: {
-          name: "List of F-Zero locations",
-          url: "https://fzero.fandom.com/wiki/List_of_F-Zero_locations",
-        },
-        path: [
-          {
-            name: "Magic Seagull",
-            url: "https://fzero.fandom.com/wiki/Magic_Seagull",
-          },
-          {
-            name: "Deep Claw",
-            url: "https://fzero.fandom.com/wiki/Deep_Claw",
-          },
-          {
-            name: "List of F-Zero locations",
-            url: "https://fzero.fandom.com/wiki/List_of_F-Zero_locations",
-          },
-        ],
-      },
     },
     {
       name: "Burnout",
       src: "https://assetsio.gnwcdn.com/bop08.jpg?width=1200&height=1200&fit=bounds&quality=70&format=jpg&auto=webp",
       string: "burnout",
       stem: "https://burnout.fandom.com/",
-      goal: {
-        start: {
-          name: "Nakamura PCPD SI-7",
-          url: "https://burnout.fandom.com/wiki/Nakamura_PCPD_SI-7",
-        },
-        end: {
-          name: "Crash TV Episode 32",
-          url: "https://burnout.fandom.com/wiki/Crash_TV_Episode_32",
-        },
-        path: [
-          {
-            name: "Nakamura PCPD SI-7",
-            url: "https://burnout.fandom.com/wiki/Nakamura_PCPD_SI-7",
-          },
-          {
-            name: "Cops and Robbers Pack",
-            url: "https://burnout.fandom.com/wiki/Cops_and_Robbers_Pack",
-          },
-          {
-            name: "Crash TV Episode 31",
-            url: "https://burnout.fandom.com/wiki/Crash_TV_Episode_31",
-          },
-          {
-            name: "Crash TV Episode 32",
-            url: "https://burnout.fandom.com/wiki/Crash_TV_Episode_32",
-          },
-        ],
-      },
     },
   ];
 
@@ -92,22 +31,19 @@ function Homepage() {
   const navigate = useNavigate();
 
   const handleSlideChange = (name) => {
-    const fandom = fandoms.find((f) => f.name === name);
-    setSelectedFandom(fandom);
+    setSelectedFandom(name);
   };
 
   const fetchGame = async () => {
-    if (!toggleDemo) {
-      try {
-        let path = selectedFandom.stem.replace(/^https?:\/\//, "");
-        path = path.slice(0, -1);
-        await axios.get(`http://localhost:5051/start-round?domain=${path}`);
-        // const response = { data: selectedFandom };
-      } catch (error) {}
-    } else {
+    try {
+      await axios.get(
+        `http://localhost:${API_PORT}/api/test/new_game?fandom=${selectedFandom.string}`
+      );
+
+      // session storage thing
+    } catch (error) {
+      console.log(error);
     }
-    localStorage.setItem("fandom", selectedFandom.name);
-    navigate("/game");
   };
 
   return (
